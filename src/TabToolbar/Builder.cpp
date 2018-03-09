@@ -64,6 +64,7 @@ TabToolbar* Builder::CreateTabToolbar(const QString& configPath)
     const int groupHeight = root["groupHeight"].toInt();
     const int groupRowCount = root["groupRowCount"].toInt();
     const bool hasSpecialTab = root["specialTab"].toBool();
+    const bool compactButtons = root.contains("compactButtons") ? root["compactButtons"].toBool() : false;
     TabToolbar* tt = new TabToolbar((QWidget*)parent(), groupHeight, groupRowCount);
 
     auto CreateCustomWidget = [this, tt](const QString& name, const QJsonObject& item)
@@ -103,21 +104,38 @@ TabToolbar* Builder::CreateTabToolbar(const QString& configPath)
     const QJsonArray cornerActions = root["cornerActions"].toArray();
     for(int i=0; i<cornerActions.size(); i++)
         tt->AddCornerAction(actionsMap[cornerActions.at(i).toString()]);
+    
+    const QJsonArray menusList = root["menus"].toArray();
+    for(int i=0; i<menusList.size(); i++)
+    {
+        const QJsonObject menuObject = menusList.at(i).toObject();
+        QMenu* menu = new QMenu((QWidget*)parent());
+        menu->setObjectName(menuObject["name"].toString());
+        menusMap[menu->objectName()] = menu;
+        QList<QAction*> actionsList;
+        const QJsonArray menuActions = menuObject["actions"].toArray();
+        for(int j=0; j<menuActions.size(); j++)
+            actionsList.append(actionsMap[menuActions.at(j).toString()]);
+        menu->addActions(actionsList);
+    }
 
     const QJsonArray tabs = root["tabs"].toArray();
     for(int i=0; i<tabs.size(); i++)
     {
         const QJsonObject tab = tabs.at(i).toObject();
+        const QString pageDisplayName = tab["displayName"].toString();
         const QString pageName = tab["name"].toString();
-        Page* page = tt->AddPage(pageName);
+        Page* page = tt->AddPage(pageDisplayName);
         guiWidgets[pageName] = page;
 
         const QJsonArray groups = tab["groups"].toArray();
         for(int j=0; j<groups.size(); j++)
         {
             const QJsonObject groupObject = groups.at(j).toObject();
+            const QString groupDisplayName = groupObject["displayName"].toString();
             const QString groupName = groupObject["name"].toString();
-            Group* group = page->AddGroup(groupName);
+            Group* group = page->AddGroup(groupDisplayName);
+            group->UseCompactButtons(compactButtons);
             guiWidgets[groupName] = group;
 
             const QJsonArray content = groupObject["content"].toArray();
