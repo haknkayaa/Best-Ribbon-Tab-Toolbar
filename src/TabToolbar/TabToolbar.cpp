@@ -25,6 +25,7 @@
 #include <QFrame>
 #include <QTimer>
 #include <QScreen>
+#include <stdexcept>
 #include <TabToolbar/TabToolbar.h>
 #include <TabToolbar/Page.h>
 #include <TabToolbar/Styles.h>

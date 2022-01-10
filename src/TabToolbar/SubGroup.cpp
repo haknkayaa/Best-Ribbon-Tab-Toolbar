@@ -20,6 +20,7 @@
 #include <QSize>
 #include <QScreen>
 #include <QSpacerItem>
+#include <stdexcept>
 #include <TabToolbar/Styles.h>
 #include <TabToolbar/StyleTools.h>
 #include <TabToolbar/SubGroup.h>

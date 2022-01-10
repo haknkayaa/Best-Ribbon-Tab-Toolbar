@@ -28,6 +28,7 @@
 #include <QProxyStyle>
 #include <QScreen>
 #include <QStyleOptionToolButton>
+#include <stdexcept>
 #include <TabToolbar/Group.h>
 #include <TabToolbar/Styles.h>
 #include <TabToolbar/StyleTools.h>
